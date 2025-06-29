@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Quizz</title>
+<style>
+  * {
+    box-sizing: border-box;
+  }
+  html, body {
+    height: 100%;
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg, #cfe9ff, #d4e8ff, #e6f3ff);
+    color: #f8f2f2;
+    display: flex;
+    flex-direction: column;
+  }
+
+  header {
+    background-color: #d6e6ff;
+    color: #007bff;
+    padding: 25px 20px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  }
+
+  header h1 {
+    margin: 0;
+    font-size: 2.4rem;
+  }
+
+  header a {
+    display: inline-block;
+    margin-top: 12px;
+    margin-right: 12px;
+    color: #007bff;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 1rem;
+  }
+
+  header a:hover {
+    color: #100f0f;
+    text-decoration: underline;
+  }
+
+  .container {
+    background: #222b45;
+    border-radius: 12px;
+    padding: 30px 40px;
+    max-width: 700px;
+    width: 100%;
+    box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+    margin: 30px auto;
+  }
+
+  h1 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+  }
+
+  footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.9rem;
+    color: #5938c5;
+    background-color: #f0f4ff;
+  }
+
+  .question-block {
+    margin-bottom: 25px;
+    padding-bottom: 15px;
+    border-bottom: 1px solid #444a6d;
+  }
+
+  .question {
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    color: #a8b0ff;
+  }
+
+  .options {
+    list-style: none;
+    padding-left: 0;
+  }
+
+  .options li {
+    margin-bottom: 12px;
+  }
+
+  .options li label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1rem;
+    user-select: none;
+    transition: color 0.3s ease;
+    color: #fff;
+  }
+
+  .options li input[type="radio"] {
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border: 2px solid #6c63ff;
+    border-radius: 50%;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    transition: background 0.2s ease;
+  }
+
+  .options li input[type="radio"]:checked::before {
+    content: "";
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: 3px;
+    left: 3px;
+    background-color: #6c63ff;
+    border-radius: 50%;
+  }
+
+  .options li label:hover {
+    color: #6c63ff;
+  }
+
+  .buttons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  button {
+    background: #6c63ff;
+    border: none;
+    padding: 12px 35px;
+    font-size: 1rem;
+    color: white;
+    border-radius: 30px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+    box-shadow: 0 6px 12px rgba(108, 99, 255, 0.6);
+  }
+
+  button:hover:not(:disabled) {
+    background: #5848d1;
+  }
+
+  button:disabled {
+    background: #3e3f65;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .result {
+    margin-top: 25px;
+    font-size: 1.3rem;
+    font-weight: 700;
+    text-align: center;
+    background: #4a4f7a;
+    padding: 15px;
+    border-radius: 12px;
+    user-select: none;
+  }
+
+  .last-score {
+    margin-top: 15px;
+    font-size: 1rem;
+    text-align: center;
+    color: #c0c3f9;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      padding: 20px;
+    }
+    button {
+      padding: 10px 25px;
+      font-size: 0.9rem;
+    }
+    .question {
+      font-size: 1rem;
+    }
+  }
+</style>
+</head>
+<body>
+
+    <header>
+    <h1>Qui veux gagner des millions?</h1>
+    <a href="../index.html">Accueil</a>
+    <a href="../projets.html">Réalisations</a>
+  </header>
+
+  <div class="container" role="main" aria-label="Quiz de connaissances générales">
+    <h1>Catégories : Connaissances Générales</h1>
+    <form id="quizForm" aria-live="polite">
+      <!-- Kesyon yo pral ajoute isit la -->
+    </form>
+
+    <div class="buttons">
+      <button id="submitBtn" aria-label="Soumettre les réponses">Soumettre</button>
+      <button id="refreshBtn" aria-label="Refaire le quiz">Refaire</button>
+    </div>
+
+    <div class="result" id="result" role="alert" aria-live="assertive" tabindex="0"></div>
+    <div class="last-score" id="lastScore"></div>
+  </div>
+
+    <footer>
+    <p>&copy; 2025 Frère Richard NAZAIRE, fms. Tous droits réservés - &copy;Maristes.</p>
+  </footer>
+
+  <script>
+    // Lis kesyon orijinal la
+    const baseQuestions = [
+      {
+        question: "Quelle est la capitale de la France ?",
+        options: ["Lyon", "Marseille", "Paris", "Toulouse"],
+        answer: 2
+      },
+      {
+        question: "Quel fruit est jaune et courbé ?",
+        options: ["Pomme", "Banane", "Orange", "Cerise"],
+        answer: 1
+      },
+      {
+        question: "Quelle est la capitale de l'Égypte ?",
+        options: ["Le Caire", "Alexandrie", "Gizeh", "Luxor"],
+        answer: 0
+      },
+      {
+        question: "Quel légume est orange et riche en bêta-carotène ?",
+        options: ["Tomate", "Carotte", "Poivron", "Haricot vert"],
+        answer: 1
+      },
+      {
+        question: "Qui est connu comme la reine de la pop ?",
+        options: ["Madonna", "Beyoncé", "Lady Gaga", "Rihanna"],
+        answer: 0
+      },
+      {
+        question: "Quelle ville est surnommée la 'Ville Lumière' ?",
+        options: ["New York", "Paris", "Londres", "Rome"],
+        answer: 1
+      },
+      {
+        question: "Quel est le principal ingrédient du guacamole ?",
+        options: ["Tomate", "Avocat", "Citron", "Oignon"],
+        answer: 1
+      },
+      {
+        question: "Quel pays est connu pour les kangourous ?",
+        options: ["Canada", "Australie", "Brésil", "Inde"],
+        answer: 1
+      }
+    ];
+
+    // Variables globales
+    const form = document.getElementById('quizForm');
+    const resultDiv = document.getElementById('result');
+    const lastScoreDiv = document.getElementById('lastScore');
+    const submitBtn = document.getElementById('submitBtn');
+    const refreshBtn = document.getElementById('refreshBtn');
+
+    // Fonction pour mélanger un tableau (Fisher-Yates)
+    function shuffle(array) {
+      const arr = array.slice();
+      for(let i = arr.length -1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Charge un quiz avec un nombre fixe de questions aléatoires (par exemple 5)
+    function loadQuiz() {
+      form.innerHTML = "";
+      resultDiv.textContent = "";
+      submitBtn.disabled = false;
+
+      // Mélanger toutes les questions puis prendre 5
+      const quizQuestions = shuffle(baseQuestions).slice(0, 5);
+
+      // Mémoriser ces questions pour vérification après
+      window.currentQuiz = quizQuestions;
+
+      quizQuestions.forEach((q, i) => {
+        // Mélanger aussi les options pour plus de variété
+        const shuffledOptions = shuffle(q.options);
+        // Trouver la nouvelle position de la bonne réponse après mélange
+        const correctAnswerText = q.options[q.answer];
+        const newCorrectIndex = shuffledOptions.indexOf(correctAnswerText);
+
+        // On sauvegarde l'index correct pour chaque question dans currentQuiz
+        window.currentQuiz[i].shuffledOptions = shuffledOptions;
+        window.currentQuiz[i].shuffledAnswer = newCorrectIndex;
+
+        const questionBlock = document.createElement('div');
+        questionBlock.classList.add('question-block');
+        questionBlock.innerHTML = `
+          <div class="question">${i + 1}. ${q.question}</div>
+          <ul class="options" role="radiogroup" aria-labelledby="q${i}-label">
+            ${shuffledOptions.map((opt, idx) => `
+              <li>
+                <label>
+                  <input type="radio" name="q${i}" value="${idx}" required />
+                  ${opt}
+                </label>
+              </li>
+            `).join('')}
+          </ul>
+        `;
+        form.appendChild(questionBlock);
+      });
+
+      // Affiche dernier score depuis localStorage
+      displayLastScore();
+    }
+
+    function getMention(score) {
+      if (score >= 9) return "Excellent";
+      if (score >= 7) return "Très Bien";
+      if (score >= 5) return "Assez Bien";
+      if (score >= 3) return "Passable";
+      return "Insuffisant";
+    }
+
+    // Affiche dernier score sauvegardé
+    function displayLastScore() {
+      const saved = localStorage.getItem('lastQuizScore');
+      if(saved) {
+        const data = JSON.parse(saved);
+        lastScoreDiv.textContent = `Votre dernière note : ${data.note.toFixed(1)} / 10 - Mention : ${data.mention}`;
+      } else {
+        lastScoreDiv.textContent = "";
+      }
+    }
+
+    submitBtn.addEventListener('click', (e) => {
+  e.preventDefault();
+
+  let score = 0;
+  const total = window.currentQuiz.length;
+
+  for(let i = 0; i < total; i++) {
+    const selected = document.querySelector(`input[name="q${i}"]:checked`);
+    if(!selected) {
+      alert("Veuillez répondre à toutes les questions.");
+      return;
+    }
+    const selectedIndex = parseInt(selected.value);
+    if(selectedIndex === window.currentQuiz[i].shuffledAnswer) {
+      score++;
+    }
+  }
+
+  const note = (score / total) * 10;
+  const mention = getMention(note);
+
+  // Attribution des couleurs selon mention
+  let color;
+  switch(mention) {
+    case "Excellent": color = "#4CAF50"; break;    // vert
+    case "Très Bien": color = "#2196F3"; break;    // bleu
+    case "Assez Bien": color = "#FF9800"; break;   // orange
+    case "Passable": color = "#FFC107"; break;     // jaune foncé
+    default: color = "#F44336";                     // rouge
+  }
+
+  resultDiv.textContent = `Votre note est : ${note.toFixed(1)} / 10 - Mention : ${mention}`;
+  resultDiv.style.color = color;  // Appliquer la couleur
+
+  submitBtn.disabled = true;
+
+  // Sauvegarder dans localStorage
+  localStorage.setItem('lastQuizScore', JSON.stringify({note, mention}));
+  displayLastScore();
+
+  // Focus sur le résultat pour accessibilité
+  resultDiv.focus();
+});
+
+
+    refreshBtn.addEventListener('click', () => {
+      loadQuiz();
+    });
+
+    // Charger quiz au démarrage
+    loadQuiz();
+  </script>
+</body>
+</html>
